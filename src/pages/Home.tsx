@@ -27,7 +27,11 @@ const Home: React.FC = () => {
     }
 
     // 前回の続きから読書を再開できることを通知
-    if (myBooks.length > 0 && myBooks.some(book => book.progress && book.progress < 100)) {
+    const hasShownReadingToast = sessionStorage.getItem('hasShownReadingToast');
+    
+    if (myBooks.length > 0 && 
+        myBooks.some(book => book.progress && book.progress < 100) && 
+        !hasShownReadingToast) {
       setTimeout(() => {
         setContinuedReading(true);
         toast({
@@ -35,6 +39,7 @@ const Home: React.FC = () => {
           description: `「${myBooks[0].title}」の続きから読めます`,
           duration: 5000,
         });
+        sessionStorage.setItem('hasShownReadingToast', 'true');
       }, 1500);
     }
   }, [currentTime, toast]);
