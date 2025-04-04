@@ -86,7 +86,6 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
               <Progress 
                 value={book.progress} 
                 className="h-1 w-full bg-muted" 
-                indicatorClassName="bg-rakuten-crimson" 
               />
             )}
           </div>
@@ -119,7 +118,6 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
             <Progress 
               value={book.progress} 
               className="h-1 w-full bg-white/30" 
-              indicatorClassName="bg-rakuten-crimson" 
             />
           </div>
         )}
