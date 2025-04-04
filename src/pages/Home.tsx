@@ -53,10 +53,7 @@ const Home: React.FC = () => {
       <header className="bg-white dark:bg-background sticky top-0 z-10 shadow-sm">
         <div className="flex justify-between items-center p-4">
           <div className="flex items-center">
-            <svg className="w-6 h-6 text-rakuten-crimson mr-2" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
-            <span className="font-bold text-lg">楽天Kobo</span>
+            <span className="font-bold text-lg text-rakuten-crimson">楽天Kobo</span>
           </div>
           <div className="flex items-center space-x-4">
             <button 

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useKobo } from '@/contexts/KoboContext';
+import { Progress } from '@/components/ui/progress';
 
 interface BookCardProps {
   book: Book;
@@ -31,6 +32,25 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
     lg: 'w-40'
   };
 
+  // 書籍カバーの背景色をIDから生成 (一貫性のある色を得るため)
+  const getColorFromId = (id: string) => {
+    const colors = [
+      'bg-rakuten-crimson/90', // 楽天レッド
+      'bg-rakuten-dark/90',    // ダークレッド
+      'bg-rakuten-gold/90',    // ゴールド
+      'bg-blue-500/90',        // ブルー
+      'bg-green-600/90',       // グリーン
+      'bg-purple-500/90',      // パープル
+      'bg-teal-500/90',        // ティール
+      'bg-orange-500/90',      // オレンジ
+      'bg-gray-600/90',        // グレー
+    ];
+    
+    // 本のIDから一貫した色を選択
+    const colorIndex = book.id.charCodeAt(book.id.length - 1) % colors.length;
+    return colors[colorIndex];
+  };
+
   // グリッドビューとリストビューに応じたレイアウト
   if (viewMode === 'list') {
     return (
@@ -38,8 +58,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
         className="book-card flex-row h-24 my-2 cursor-pointer" 
         onClick={handleClick}
       >
-        <div className="book-cover h-full w-16">
-          <img src={book.coverImage} alt={book.title} className="object-cover h-full" />
+        <div className="book-cover h-full w-16 relative">
+          <div className={`absolute inset-0 ${getColorFromId(book.id)} flex items-center justify-center text-white text-xl font-bold`}>
+            {book.title.charAt(0)}
+          </div>
           {book.isFavorite && (
             <div className="absolute top-1 right-1">
               <Heart className="w-4 h-4 fill-rakuten-red text-rakuten-red" />
@@ -51,7 +73,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
             <h3 className="book-title">{book.title}</h3>
             <p className="book-author">{book.author}</p>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-1">
             {!book.isOwned ? (
               <p className="book-price">¥{book.price.toLocaleString()}</p>
             ) : (
@@ -61,12 +83,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
               </div>
             )}
             {book.isOwned && showProgress && book.progress !== undefined && (
-              <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-rakuten-red" 
-                  style={{ width: `${book.progress}%` }}
-                />
-              </div>
+              <Progress 
+                value={book.progress} 
+                className="h-1 w-full bg-muted" 
+                indicatorClassName="bg-rakuten-crimson" 
+              />
             )}
           </div>
         </div>
@@ -80,8 +101,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
       className={cn("book-card cursor-pointer my-2", sizeClasses[size])}
       onClick={handleClick}
     >
-      <div className="book-cover relative">
-        <img src={book.coverImage} alt={book.title} />
+      <div className="book-cover relative aspect-[2/3] overflow-hidden">
+        <div className={`absolute inset-0 ${getColorFromId(book.id)} flex items-center justify-center text-white font-bold`}>
+          {book.title.charAt(0)}
+        </div>
         
         {/* お気に入りアイコン */}
         {book.isFavorite && (
@@ -92,10 +115,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, showProgress = true, size = '
         
         {/* 進行状況インジケーター */}
         {book.isOwned && showProgress && book.progress !== undefined && (
-          <div className="absolute bottom-0 left-0 right-0 reading-progress-bar">
-            <div 
-              className="reading-progress-fill" 
-              style={{ '--reading-progress': `${book.progress}%` } as React.CSSProperties} 
+          <div className="absolute bottom-0 left-0 right-0 px-1 pb-1">
+            <Progress 
+              value={book.progress} 
+              className="h-1 w-full bg-white/30" 
+              indicatorClassName="bg-rakuten-crimson" 
             />
           </div>
         )}
